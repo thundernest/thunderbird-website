@@ -47,6 +47,9 @@ BOUNCER_URL = 'https://download.mozilla.org/'
 # path for assets that need processing, like LESS and js
 ASSETS = 'assets'
 
+# path to folder for markdown documents
+MARKDOWN_DIR = 'assets/markdown/'
+
 # base url for media files
 MEDIA_URL = '/media'
 

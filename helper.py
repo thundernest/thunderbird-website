@@ -6,12 +6,14 @@ import json
 import markdown
 import re
 import settings
+import StringIO
 import sys
 import translate
 
 from babel.core import Locale, UnknownLocaleError
 from babel.dates import format_date
 from babel.numbers import format_number
+from mdx_outline import OutlineExtension
 from os import path
 from os.path import splitext
 from product_details import thunderbird_desktop
@@ -301,7 +303,6 @@ def donate_url(ctx, content='', source='thunderbird.net', download=False):
     download_string = ''
     if download:
         download_string = '&tbdownload=true'
-
     return settings.DONATE_LINK.format(content=content, source=source) + download_string
 
 
@@ -311,6 +312,17 @@ def safe_markdown(text):
     return jinja2.Markup(markdown.markdown(text))
 
 
+@jinja2.contextfunction
+def markdown_file(ctx, file):
+    source_file = settings.MARKDOWN_DIR + file
+    output = StringIO.StringIO()
+    markdown.markdownFromFile(input=source_file, output=output,
+        extensions=['attr_list', 'headerid',
+        OutlineExtension((('wrapper_cls', ''),))])
+    content = output.getvalue().decode('utf8')
+    return jinja2.Markup(content)
+
+
 def get_locale(lang):
     """Return a babel Locale object for lang. defaults to LANGUAGE_CODE."""
     lang = babel_format_locale_map.get(lang) or lang
@@ -318,6 +330,7 @@ def get_locale(lang):
         return Locale.parse(lang, sep='-')
     except (UnknownLocaleError, ValueError):
         return Locale(*settings.LANGUAGE_CODE.split('-'))
+
 
 @jinja2.filters.contextfilter
 def l10n_format_date(ctx, date, format='long'):

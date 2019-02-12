@@ -174,8 +174,8 @@ shutil.rmtree(renderpath, ignore_errors=True)
 # en-US
 build_site(settings.LANGUAGE_CODE)
 
-for lang in settings.PROD_LANGUAGES:
-    build_site(lang)
+#for lang in settings.PROD_LANGUAGES:
+#    build_site(lang)
 
 print "Copying media files..."
 shutil.copytree(staticpath, renderpath+'/media')
